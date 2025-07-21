@@ -2,16 +2,14 @@
 
 namespace Modules\Coupon\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use Modules\Coupon\Enums\CouponType;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-
 
 class CouponRequest extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -36,17 +34,17 @@ class CouponRequest extends FormRequest
             $rules['amount'] = ['required', 'numeric', 'min:0'];
         }
 
-        return  [
-            'code'                => ['required', Rule::unique('coupons')->where('language', $language)],
-            'amount'              => $rules['amount'],
+        return [
+            'code' => ['required', Rule::unique('coupons')->where('language', $language)],
+            'amount' => $rules['amount'],
             'minimum_cart_amount' => ['required', 'numeric', 'min:0'],
-            'shop_id'             => ['nullable', 'exists:Modules\Ecommerce\Models\Shop,id'],
-            'type'                => ['required', Rule::in(CouponType::getValues())],
-            'description'         => ['nullable', 'string'],
-            'image'               => ['array'],
-            'language'            => ['nullable', 'string'],
-            'active_from'         => ['required', 'date'],
-            'expire_at'           => ['required', 'date'],
+            'shop_id' => ['nullable', 'exists:Modules\Ecommerce\Models\Shop,id'],
+            'type' => ['required', Rule::in(CouponType::getValues())],
+            'description' => ['nullable', 'string'],
+            'image' => ['array'],
+            'language' => ['nullable', 'string'],
+            'active_from' => ['required', 'date'],
+            'expire_at' => ['required', 'date'],
         ];
     }
 
@@ -58,16 +56,15 @@ class CouponRequest extends FormRequest
     public function messages()
     {
         return [
-            'code.required'                => 'Code field is required and it should be unique',
-            'amount.required'              => 'Amount field is required',
+            'code.required' => 'Code field is required and it should be unique',
+            'amount.required' => 'Amount field is required',
             'minimum_cart_amount.required' => 'Cart Minimum Amount field is required',
-            'type.required'                => 'Coupon type is required and it can be only ' . CouponType::FIXED_COUPON . ' or ' . CouponType::PERCENTAGE_COUPON . ' or ' . CouponType::FREE_SHIPPING_COUPON . '',
-            'type.in'                      => 'Type only can be ' . CouponType::FIXED_COUPON . ' or ' . CouponType::PERCENTAGE_COUPON . ' or ' . CouponType::FREE_SHIPPING_COUPON . '',
-            'active_from.required'         => 'Active from field is required',
-            'expire_at.required'           => 'Expire at field is required',
+            'type.required' => 'Coupon type is required and it can be only '.CouponType::FIXED_COUPON.' or '.CouponType::PERCENTAGE_COUPON.' or '.CouponType::FREE_SHIPPING_COUPON.'',
+            'type.in' => 'Type only can be '.CouponType::FIXED_COUPON.' or '.CouponType::PERCENTAGE_COUPON.' or '.CouponType::FREE_SHIPPING_COUPON.'',
+            'active_from.required' => 'Active from field is required',
+            'expire_at.required' => 'Expire at field is required',
         ];
     }
-
 
     public function failedValidation(Validator $validator)
     {

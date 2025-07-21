@@ -1,28 +1,25 @@
 <?php
 
-
 namespace Modules\Coupon\Repositories;
 
 use Exception;
 use Illuminate\Http\Request;
+use Modules\Core\Exceptions\DurrbarBadRequestException;
 use Modules\Core\Repositories\BaseRepository;
+use Modules\Coupon\Enums\CouponType;
 use Modules\Coupon\Models\Coupon;
+use Modules\Role\Enums\Permission;
+use Modules\Settings\Models\Settings;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
-use Modules\Ecommerce\Models\Settings;
-use Modules\Ecommerce\Models\Shop;
-use Modules\Coupon\Enums\CouponType;
-use Modules\Ecommerce\Enums\Permission;
-use Modules\Ecommerce\Exceptions\MarvelBadRequestException;
 
 class CouponRepository extends BaseRepository
 {
-
     /**
      * @var array
      */
     protected $fieldSearchable = [
-        'code'        => 'like',
+        'code' => 'like',
         'shop_id',
         'language',
 
@@ -57,6 +54,7 @@ class CouponRepository extends BaseRepository
             //
         }
     }
+
     /**
      * Configure the Model
      **/
@@ -68,7 +66,7 @@ class CouponRepository extends BaseRepository
     /**
      * storeCoupon
      *
-     * @param  mixed $request
+     * @param  mixed  $request
      * @return mixed
      */
     public function storeCoupon(Request $request)
@@ -77,11 +75,13 @@ class CouponRepository extends BaseRepository
             $data = $request->only($this->dataArray);
             $data['user_id'] = $request->user()->id;
             $data['is_approve'] = $request->user()->hasPermissionTo(Permission::SUPER_ADMIN);
+
             return $this->create($data);
         } catch (Exception $th) {
-            throw new MarvelBadRequestException(COULD_NOT_CREATE_THE_RESOURCE);
+            throw new DurrbarBadRequestException(COULD_NOT_CREATE_THE_RESOURCE);
         }
     }
+
     public function verifyCoupon(Request $request)
     {
         $code = $request->code;
@@ -96,8 +96,8 @@ class CouponRepository extends BaseRepository
             $couponShopId = $coupon->shop_id;
             $useFreeShipping = $is_freeShipping && $freeShippingAmount <= $sub_total;
 
-            if (!$coupon->is_approve || (empty($request->user()) && $coupon->target)) {
-                return ["is_valid" => false, "message" => $coupon->is_approve ? THIS_COUPON_CODE_IS_ONLY_FOR_VERIFIED_USERS : THIS_COUPON_CODE_IS_NOT_APPROVED];
+            if (! $coupon->is_approve || (empty($request->user()) && $coupon->target)) {
+                return ['is_valid' => false, 'message' => $coupon->is_approve ? THIS_COUPON_CODE_IS_ONLY_FOR_VERIFIED_USERS : THIS_COUPON_CODE_IS_NOT_APPROVED];
             }
 
             $onlyThisShopProductApplyCoupon = true;
@@ -124,8 +124,8 @@ class CouponRepository extends BaseRepository
                 }
             }
 
-            if (!$onlyThisShopProductApplyCoupon) {
-                return ["is_valid" => false, "message" => COUPON_CODE_IS_NOT_APPLICABLE_IN_THIS_SHOP_PRODUCT];
+            if (! $onlyThisShopProductApplyCoupon) {
+                return ['is_valid' => false, 'message' => COUPON_CODE_IS_NOT_APPLICABLE_IN_THIS_SHOP_PRODUCT];
             }
 
             if (
@@ -133,16 +133,16 @@ class CouponRepository extends BaseRepository
                 $useFreeShipping &&
                 $coupon->type == CouponType::FREE_SHIPPING_COUPON
             ) {
-                return ["is_valid" => false, "message" => ALREADY_FREE_SHIPPING_ACTIVATED];
+                return ['is_valid' => false, 'message' => ALREADY_FREE_SHIPPING_ACTIVATED];
             } elseif ($coupon->is_valid && $is_satisfy && $onlyThisShopProductApplyCoupon) {
-                return ["is_valid" => true, "coupon" => $coupon];
-            } elseif ($coupon->is_valid && !$is_satisfy) {
-                return ["is_valid" => false, "message" => COUPON_CODE_IS_NOT_APPLICABLE];
+                return ['is_valid' => true, 'coupon' => $coupon];
+            } elseif ($coupon->is_valid && ! $is_satisfy) {
+                return ['is_valid' => false, 'message' => COUPON_CODE_IS_NOT_APPLICABLE];
             } else {
-                return ["is_valid" => false, "message" => INVALID_COUPON_CODE];
+                return ['is_valid' => false, 'message' => INVALID_COUPON_CODE];
             }
         } catch (\Exception $th) {
-            return ["is_valid" => false, "message" => INVALID_COUPON_CODE];
+            return ['is_valid' => false, 'message' => INVALID_COUPON_CODE];
         }
     }
 }

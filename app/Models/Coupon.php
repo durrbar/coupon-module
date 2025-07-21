@@ -26,21 +26,18 @@ class Coupon extends Model
     protected $appends = ['is_valid', 'translated_languages'];
 
     protected $casts = [
-        'image'   => 'json',
+        'image' => 'json',
     ];
 
     protected static function boot()
     {
         parent::boot();
         // Order by updated_at desc
-        static::addGlobalScope('order', function (Builder $builder) {
+        static::addGlobalScope('order', function (Builder $builder): void {
             $builder->orderBy('updated_at', 'desc');
         });
     }
 
-    /**
-     * @return HasMany
-     */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'coupon_id');
@@ -53,17 +50,12 @@ class Coupon extends Model
     {
         return Carbon::now()->between($this->active_from, $this->expire_at);
     }
-        /**
-     * @return BelongsTo
-     */
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function shop(): BelongsTo
     {
         return $this->belongsTo(Shop::class);
