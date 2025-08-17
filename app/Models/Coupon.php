@@ -4,17 +4,19 @@ namespace Modules\Coupon\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules\Ecommerce\Models\Shop;
-use Modules\Ecommerce\Models\User;
 use Modules\Ecommerce\Traits\TranslationTrait;
 use Modules\Order\Models\Order;
+use Modules\User\Models\User;
+use Modules\Vendor\Models\Shop;
 
 class Coupon extends Model
 {
+    use HasUuids;
     use SoftDeletes;
     use TranslationTrait;
 
