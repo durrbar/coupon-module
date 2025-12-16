@@ -28,5 +28,7 @@ return new class () extends Migration {
             $table->dropColumn('target');
             $table->dropColumn('is_approve');
         });
+
+        Schema::dropIfExists('coupons');
     }
 };
