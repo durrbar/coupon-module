@@ -50,7 +50,13 @@ class Coupon extends Model
      */
     public function getIsValidAttribute()
     {
-        return Carbon::now()->between($this->active_from, $this->expire_at);
+        $attributes = $this->getAttributes();
+
+        if (! array_key_exists('active_from', $attributes) || ! array_key_exists('expire_at', $attributes)) {
+            return false;
+        }
+
+        return Carbon::now()->between($attributes['active_from'], $attributes['expire_at']);
     }
 
     public function user(): BelongsTo

@@ -53,9 +53,10 @@ class CouponController extends CoreController
                         break;
 
                     case $user->hasPermissionTo(Permission::STORE_OWNER):
+                        $shopIds = $user->shops()->pluck('id');
                         $this->repository->hasPermission($user, $request->shop_id)
                             ? $query->where('shop_id', $request->shop_id)
-                            : $query->where('user_id', $user->id)->whereIn('shop_id', $user->shops->pluck('id'));
+                            : $query->where('user_id', $user->id)->whereIn('shop_id', $shopIds);
                         $query->where('language', $language);
                         break;
 
