@@ -7,11 +7,11 @@ namespace Modules\Coupon\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Modules\Coupon\Enums\CouponType;
 
-final class CouponRequest extends FormRequest
+class CouponRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

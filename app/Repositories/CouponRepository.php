@@ -15,7 +15,7 @@ use Modules\Settings\Models\Settings;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 
-final class CouponRepository extends BaseRepository
+class CouponRepository extends BaseRepository
 {
     /**
      * @var array

@@ -21,7 +21,7 @@ use Prettus\Validator\Exceptions\ValidatorException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-final class CouponController extends CoreController
+class CouponController extends CoreController
 {
     public $repository;
 
