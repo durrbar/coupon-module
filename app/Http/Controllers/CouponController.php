@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Coupon\Http\Controllers;
 
 use Exception;
@@ -19,7 +21,7 @@ use Prettus\Validator\Exceptions\ValidatorException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-class CouponController extends CoreController
+final class CouponController extends CoreController
 {
     public $repository;
 
@@ -48,11 +50,11 @@ class CouponController extends CoreController
             $query = $this->repository->whereNotNull('id')->with('shop');
             if ($user) {
                 switch (true) {
-                    case $user->hasPermissionTo(Permission::SUPER_ADMIN):
+                    case $user->hasPermissionTo(Permission::SuperAdmin->value):
                         $query->where('language', $language);
                         break;
 
-                    case $user->hasPermissionTo(Permission::STORE_OWNER):
+                    case $user->hasPermissionTo(Permission::StoreOwner->value):
                         $shopIds = $user->shops()->pluck('id');
                         $this->repository->hasPermission($user, $request->shop_id)
                             ? $query->where('shop_id', $request->shop_id)
@@ -60,7 +62,7 @@ class CouponController extends CoreController
                         $query->where('language', $language);
                         break;
 
-                    case $user->hasPermissionTo(Permission::STAFF):
+                    case $user->hasPermissionTo(Permission::Staff->value):
                         $query->where('shop_id', $request->shop_id)->where('language', $language);
                         break;
 
@@ -175,7 +177,7 @@ class CouponController extends CoreController
 
             if ($request->has('language') && $request['language'] === DEFAULT_LANGUAGE) {
                 $updatedCoupon = $request->only($dataArray);
-                if (! $request->user()->hasPermissionTo(Permission::SUPER_ADMIN)) {
+                if (! $request->user()->hasPermissionTo(Permission::SuperAdmin->value)) {
                     $updatedCoupon['is_approve'] = false;
                 }
                 $nonTranslatableKeys = ['language', 'image', 'description', 'id'];
@@ -212,7 +214,7 @@ class CouponController extends CoreController
     {
 
         try {
-            if (! $request->user()->hasPermissionTo(Permission::SUPER_ADMIN)) {
+            if (! $request->user()->hasPermissionTo(Permission::SuperAdmin->value)) {
                 throw new DurrbarException(NOT_AUTHORIZED);
             }
             $coupon = $this->repository->findOrFail($request->id);
@@ -227,7 +229,7 @@ class CouponController extends CoreController
     public function disApproveCoupon(Request $request)
     {
         try {
-            if (! $request->user()->hasPermissionTo(Permission::SUPER_ADMIN)) {
+            if (! $request->user()->hasPermissionTo(Permission::SuperAdmin->value)) {
                 throw new DurrbarException(NOT_AUTHORIZED);
             }
             $coupon = $this->repository->findOrFail($request->id);

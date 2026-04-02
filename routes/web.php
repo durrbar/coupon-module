@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Modules\Coupon\Http\Controllers\CouponController;
 use Modules\Role\Enums\Permission;
@@ -30,7 +32,7 @@ Route::post('coupons/verify', [CouponController::class, 'verify']);
  * *****************************************
  */
 Route::group(
-    ['middleware' => ['permission:'.Permission::STORE_OWNER, 'auth:sanctum', 'email.verified']],
+    ['middleware' => ['permission:'.Permission::StoreOwner->value, 'auth:sanctum', 'email.verified']],
     function (): void {
 
         Route::apiResource('coupons', CouponController::class, [
@@ -45,7 +47,7 @@ Route::group(
  * ******************************************
  */
 Route::group(
-    ['middleware' => ['permission:'.Permission::STAFF.'|'.Permission::STORE_OWNER, 'auth:sanctum', 'email.verified']],
+    ['middleware' => ['permission:'.Permission::Staff->value.'|'.Permission::StoreOwner->value, 'auth:sanctum', 'email.verified']],
     function (): void {
 
         Route::apiResource('coupons', CouponController::class, [
@@ -59,7 +61,7 @@ Route::group(
  * Authorized Route for Super Admin only
  * *****************************************
  */
-Route::group(['middleware' => ['permission:'.Permission::SUPER_ADMIN, 'auth:sanctum']], function (): void {
+Route::group(['middleware' => ['permission:'.Permission::SuperAdmin->value, 'auth:sanctum']], function (): void {
     // Route::apiResource('coupons', CouponController::class, [
     //     'only' => ['store', 'update', 'destroy'],
     // ]);

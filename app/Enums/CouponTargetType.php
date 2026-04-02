@@ -1,15 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Coupon\Enums;
 
-use BenSampo\Enum\Enum;
-
-/**
- * Class RoleType
- */
-final class CouponTargetType extends Enum
+enum CouponTargetType: string
 {
-    public const GLOBAL_CUSTOMER = 'global_customer';
-
-    public const VERIFIED_CUSTOMER = 'verified_customer';
+    case GlobalCustomer = 'global_customer';
+    case VerifiedCustomer = 'verified_customer';
 }

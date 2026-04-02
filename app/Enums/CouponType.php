@@ -1,18 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Coupon\Enums;
 
-use BenSampo\Enum\Enum;
-
-/**
- * Class RoleType
- */
-final class CouponType extends Enum
+enum CouponType: string
 {
-    public const FIXED_COUPON = 'fixed';
-
-    public const PERCENTAGE_COUPON = 'percentage';
-
-    public const FREE_SHIPPING_COUPON = 'free_shipping';
-    // public const DEFAULT_COUPON = 'fixed';
+    case FixedCoupon = 'fixed';
+    case PercentageCoupon = 'percentage';
+    case FreeShippingCoupon = 'free_shipping';
 }

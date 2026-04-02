@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\Coupon\Repositories;
 
 use Exception;
@@ -13,7 +15,7 @@ use Modules\Settings\Models\Settings;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Exceptions\RepositoryException;
 
-class CouponRepository extends BaseRepository
+final class CouponRepository extends BaseRepository
 {
     /**
      * @var array
@@ -74,7 +76,7 @@ class CouponRepository extends BaseRepository
         try {
             $data = $request->only($this->dataArray);
             $data['user_id'] = $request->user()->id;
-            $data['is_approve'] = $request->user()->hasPermissionTo(Permission::SUPER_ADMIN);
+            $data['is_approve'] = $request->user()->hasPermissionTo(Permission::SuperAdmin->value);
 
             return $this->create($data);
         } catch (Exception $th) {
@@ -104,21 +106,21 @@ class CouponRepository extends BaseRepository
             if ($couponShopId && $item) {
                 $totalCartAmount = array_reduce(
                     $item,
-                    fn ($sum, $product) => $sum + (isset($product['shop_id']) && $product['shop_id'] == $couponShopId ? $product['price'] * $product['quantity'] : 0),
+                    fn ($sum, $product) => $sum + (isset($product['shop_id']) && $product['shop_id'] === $couponShopId ? $product['price'] * $product['quantity'] : 0),
                     0
                 );
 
                 $isLessThanSubtotal = $sub_total >= $totalCartAmount;
 
                 switch ($coupon->type) {
-                    case CouponType::FIXED_COUPON:
+                    case CouponType::FixedCoupon->value:
                         $onlyThisShopProductApplyCoupon = $isLessThanSubtotal && $totalCartAmount > $coupon->amount;
                         break;
-                    case CouponType::PERCENTAGE_COUPON:
+                    case CouponType::PercentageCoupon->value:
                         $couponPercentageAmount = ($totalCartAmount * $coupon->amount) / 100;
                         $onlyThisShopProductApplyCoupon = $isLessThanSubtotal && $totalCartAmount > $couponPercentageAmount;
                         break;
-                    case CouponType::FREE_SHIPPING_COUPON:
+                    case CouponType::FreeShippingCoupon->value:
                         $onlyThisShopProductApplyCoupon = $isLessThanSubtotal && $useFreeShipping;
                         break;
                 }
@@ -131,17 +133,20 @@ class CouponRepository extends BaseRepository
             if (
                 $coupon->is_valid &&
                 $useFreeShipping &&
-                $coupon->type == CouponType::FREE_SHIPPING_COUPON
+                $coupon->type === CouponType::FreeShippingCoupon->value
             ) {
                 return ['is_valid' => false, 'message' => ALREADY_FREE_SHIPPING_ACTIVATED];
-            } elseif ($coupon->is_valid && $is_satisfy && $onlyThisShopProductApplyCoupon) {
-                return ['is_valid' => true, 'coupon' => $coupon];
-            } elseif ($coupon->is_valid && ! $is_satisfy) {
-                return ['is_valid' => false, 'message' => COUPON_CODE_IS_NOT_APPLICABLE];
-            } else {
-                return ['is_valid' => false, 'message' => INVALID_COUPON_CODE];
             }
-        } catch (\Exception $th) {
+            if ($coupon->is_valid && $is_satisfy && $onlyThisShopProductApplyCoupon) {
+                return ['is_valid' => true, 'coupon' => $coupon];
+            }
+            if ($coupon->is_valid && ! $is_satisfy) {
+                return ['is_valid' => false, 'message' => COUPON_CODE_IS_NOT_APPLICABLE];
+            }
+
+            return ['is_valid' => false, 'message' => INVALID_COUPON_CODE];
+
+        } catch (Exception $th) {
             return ['is_valid' => false, 'message' => INVALID_COUPON_CODE];
         }
     }
