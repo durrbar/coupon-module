@@ -3,17 +3,19 @@
 namespace Modules\Coupon\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Core\Models\Scopes\OrderByUpdatedAtDescScope;
 use Modules\Ecommerce\Traits\TranslationTrait;
 use Modules\Order\Models\Order;
 use Modules\User\Models\User;
 use Modules\Vendor\Models\Shop;
 
+#[ScopedBy([OrderByUpdatedAtDescScope::class])]
 class Coupon extends Model
 {
     use HasUuids;
@@ -30,15 +32,6 @@ class Coupon extends Model
     protected $casts = [
         'image' => 'json',
     ];
-
-    protected static function boot()
-    {
-        parent::boot();
-        // Order by updated_at desc
-        static::addGlobalScope('order', function (Builder $builder): void {
-            $builder->orderBy('updated_at', 'desc');
-        });
-    }
 
     public function orders(): HasMany
     {
