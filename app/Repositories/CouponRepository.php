@@ -48,7 +48,7 @@ class CouponRepository extends BaseRepository
         return $this->dataArray;
     }
 
-    public function boot()
+    public function boot(): void
     {
         try {
             $this->pushCriteria(app(RequestCriteria::class));
@@ -60,7 +60,7 @@ class CouponRepository extends BaseRepository
     /**
      * Configure the Model
      **/
-    public function model()
+    public function model(): string
     {
         return Coupon::class;
     }
