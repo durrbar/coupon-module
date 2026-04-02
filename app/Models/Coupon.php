@@ -35,10 +35,7 @@ class Coupon extends Model
         return $this->hasMany(Order::class, 'coupon_id');
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsValidAttribute()
+    public function getIsValidAttribute(): bool
     {
         $attributes = $this->getAttributes();
 
