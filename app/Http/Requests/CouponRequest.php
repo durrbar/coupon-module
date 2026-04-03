@@ -18,7 +18,7 @@ class CouponRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -28,7 +28,7 @@ class CouponRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $language = $this->language ?? DEFAULT_LANGUAGE;
         if ($this->has('type') && $this->type === CouponType::PercentageCoupon->value) {
@@ -56,7 +56,7 @@ class CouponRequest extends FormRequest
      *
      * @return array
      */
-    public function messages()
+    public function messages(): array
     {
         return [
             'code.required' => 'Code field is required and it should be unique',
@@ -69,7 +69,7 @@ class CouponRequest extends FormRequest
         ];
     }
 
-    public function failedValidation(Validator $validator)
+    public function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
