@@ -23,12 +23,7 @@ use Throwable;
 
 class CouponController extends CoreController
 {
-    public $repository;
-
-    public function __construct(CouponRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(public CouponRepository $repository) {}
 
     /**
      * Display a listing of the resource.
