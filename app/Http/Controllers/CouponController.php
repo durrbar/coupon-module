@@ -160,7 +160,6 @@ class CouponController extends CoreController
     /**
      * Undocumented function
      *
-     * @return void
      */
     public function updateCoupon(Request $request)
     {
